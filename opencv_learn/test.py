@@ -74,10 +74,13 @@ def extract_object_demo():
         lower_hsv = np.array([37, 43, 46])
         upper_hsv = np.array([77, 255, 255])
         mask = cv.inRange(hsv, lowerb=lower_hsv, upperb=upper_hsv)
+        dst = cv.bitwise_and(frame, frame, mask=mask)
         if not ret:
             break
         cv.imshow("video", frame)
-        cv.imshow("mask", mask)
+        # cv.imshow("mask", mask)
+        cv.imshow("mask", dst)
+
         c = cv.waitKey(40)
         if c == 27:
             break
@@ -95,17 +98,17 @@ t1 = cv.getTickCount()
 # create_image()
 # inverse(src)
 # color_space_demo(src)
-# extract_object_demo()
+extract_object_demo()
 
 # 三个通道分离
-b, g, r = cv.split(src)  # 三个通道，
-cv.imshow("blue", b)
-cv.imshow("green", g)
-cv.imshow("red", r)
-# 三个通道合并
-src = cv.merge([b, g, r])
-
-cv.imshow("合并",src)
+# b, g, r = cv.split(src)  # 三个通道，
+# cv.imshow("blue", b)
+# cv.imshow("green", g)
+# cv.imshow("red", r)
+# # 三个通道合并
+# src = cv.merge([b, g, r])
+#
+# cv.imshow("合并",src)
 
 t2 = cv.getTickCount()
 
