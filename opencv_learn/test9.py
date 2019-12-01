@@ -14,3 +14,5 @@ cv.imshow('import image', src)
 blur_demo(src)
 cv.waitKey(0)
 cv.destroyAllWindows()
+
+# cv.GaussianBlur() 高斯模糊
