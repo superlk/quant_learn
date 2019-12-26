@@ -1,9 +1,17 @@
 from PIL import Image, ImageFont, ImageDraw
 
 image1 = Image.open('/Users/superlk/Downloads/templete1.png')
+# image3 = Image.open('/Users/superlk/Downloads/templete2.png')
+
 print(image1.size)
+# print(image3.size)
+
+image1.show()
+# image3.show()
+
 image2 = Image.open('/Users/superlk/Downloads/head.png')
 # print(image2)
+
 
 width = image1.size[0]
 high = image1.size[1]
