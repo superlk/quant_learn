@@ -1,15 +1,45 @@
 from PIL import Image, ImageFont, ImageDraw
-from flask import Flask
+from flask import Flask, request, Request, Response
 
 from flask import render_template
+import hashlib
 
 app = Flask(__name__)
+token = "Qazwsx1234sdfg@dfdsa"
+appID = 'wx57fd4ce8d1ae716d'
+appsecret = "9e3951f107afba9a82a3ff01fff05714"
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello(name=None):
     # start()
-    return render_template('hello.html', name=name)
+    if request.method == 'GET':
+        print("----", request.args)
+        signature = request.args.get('signature')  # 微信加密签名
+        echostr = request.args.get("echostr")  # 微信随机字符串
+        timestamp = request.args.get('timestamp')  # 微信发送请求时间戳
+        nonce = request.args.get('nonce')  # 微信随机数字
+        # 计算微信加密签名 （timestamp,nonce,token) 组合在一起，按字典序排序，然后组合在一起形成数组
+        # 将3个参数拼接成一个字符串然后sha1加密
+        #  加密的生成一个signature，和微信发来的进行对比
+        # 如何一样，返回echostr给微信服务器
+        arr = [timestamp, nonce, token]
+        arr.sort()
+        data = ''.join(arr)
+        # print(data)
+        tokens = hashlib.sha1(data.encode("utf-8")).hexdigest()
+        print(tokens)
+        if tokens == signature:
+            return echostr
+        else:
+            return "error"
+
+    # return render_template('hello.html', name=name)
+
+
+# 获取微信唯一凭证
+def access_token():
+    pass
 
 
 def start():
