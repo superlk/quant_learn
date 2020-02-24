@@ -1,7 +1,7 @@
 # author:lk
 # date: 20200224
 # word 转 excel
-import xlrd
+
 import xlwt
 
 
@@ -17,7 +17,7 @@ class WordToExcel(object):
     def read_word(self):
         """
         读取word
-        :return:
+        :return:None
         """
 
         if self.path:
@@ -32,6 +32,9 @@ class WordToExcel(object):
         处理数据格式化
         :return: None
         """
+        if self.get_error():
+            print(self.error)
+            return
         if len(self.data) > 0:
             for line in self.data:
                 # print(line.strip())
@@ -50,10 +53,13 @@ class WordToExcel(object):
         写excel
         :return: None
         """
+        if self.get_error():
+            print(self.error)
+            return
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet("sheet1")
         for i in range(len(self.write_data)):
-            print(i,self.write_data[i][0],self.write_data[i][1])
+            print(i, self.write_data[i][0], self.write_data[i][1])
             sheet.write(i, 0, self.write_data[i][0])
             sheet.write(i, 1, self.write_data[i][1])
         workbook.save(self.file)
