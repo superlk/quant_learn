@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import random
 from selenium import webdriver
 import time
+import os
 
 
 class Book(object):
@@ -19,6 +20,8 @@ class Book(object):
         self.duoDu_not_found = []
         self.file = '/Users/superlk/Desktop/樊登读书/list.txt'
         self.error = '/Users/superlk/Desktop/樊登读书/error.txt'
+        self.name = None,
+        self.dir = '/Users/superlk/Desktop/樊登读书/'
 
     invalidLink1 = '#'
     # 非法URL 2
@@ -121,6 +124,7 @@ class Book(object):
     def start(self):
         self.get_book_list()
         for i in self.book_list:
+            print("-----", i)
             self.get_duoDu(i)
         for n, u in self.duoDu_dict.items():
             self.get_down(n, u)
@@ -132,6 +136,7 @@ class Book(object):
             self.write_file(self.file, f)
 
             self.download_button_onclick(l)
+            return
 
     def write_file(self, file, name):
         """
@@ -140,11 +145,12 @@ class Book(object):
         :param name:
         :return:
         """
+        self.name = name
         # file = '/Users/superlk/Desktop/樊登读书/list.txt'
         with open(file, 'a+') as f:
-            f.writelines(name+'\n')
+            f.writelines(name + '\n')
 
-    def download_button_onclick(self, url):
+    def download_button_onclick1(self, url):
         """
         下载
         :param url:
@@ -166,11 +172,62 @@ class Book(object):
         browser.find_element_by_xpath("//button[@onclick='file_down( 0, 0)']").click()
         # print(need_time,need_time_list)
         time.sleep(need_time)
+
+        browser.quit()
+
+    def download_button_onclick(self, url):
+        """
+        下载
+        :param url:
+        :return:
+        """
+        browser = webdriver.Chrome()
+        browser.get(url)
+        time.sleep(5)
+        # print("----")
+        need_time_selector = browser.find_element_by_xpath(
+            "//p[@class='fs--1 mb-1']").text
+        need_time_list = need_time_selector.split()
+        #
+        print(">>>>====>", need_time_list)
+        if len(need_time_list) > 0:
+            size = need_time_list[0].split('文件大小')
+            print(float(size[1]))
+            browser.find_element_by_xpath("//button[@onclick='file_down( 0, 0)']").click()
+
+            max_size = size * 1000 * 1000
+
+            while True:
+                time.sleep(1)
+                if self.name:
+                    if '点击下载' in self.name:
+                        new_name = self.name.split('点击下载')[0]
+                    else:
+                        new_name = self.name
+                    print("------->",self.dir + new_name)
+                    new_size = os.path.getsize(self.dir + new_name)
+                    if max_size > new_size:
+                        print("max_size:",max_size,"   size:",new_size)
+                        continue
+                    else:
+                        break
+
+        # need_time = 5
+        # if need_time_list[2] == '分钟':
+        #     need_time = int(need_time_list[1]) * 60
+        # elif need_time_list[2] == '秒':
+        #     need_time = int(need_time_list[1])
+        # else:
+        #     need_time = 5
+        # browser.find_element_by_xpath("//button[@onclick='file_down( 0, 0)']").click()
+        # print(need_time,need_time_list)
+        # time.sleep(need_time)
+
         browser.quit()
 
 
 if __name__ == '__main__':
-    url_init = "http://blog.sina.com.cn/s/articlelist_6062317667_1_"+'1'+'.html'
+    url_init = "http://blog.sina.com.cn/s/articlelist_6062317667_1_" + '1' + '.html'
     # for i in range(5):
     #     url = url_init + str(i + 1) + '.html'
     #     print(url)
@@ -180,5 +237,5 @@ if __name__ == '__main__':
 
     book = Book(url_init)
     book.start()
-    # book.download_button_onclick('https://545c.com/file/18852109-393346266')
+    # book.download_button_onclick('https://u18852109.pipipan.com/fs/18852109-386318959')
     # book.text()
