@@ -17,6 +17,8 @@ class Book(object):
         self.duoDu_dict = {}
         self.download_dict = {}
         self.duoDu_not_found = []
+        self.file = '/Users/superlk/Desktop/樊登读书/list.txt'
+        self.error = '/Users/superlk/Desktop/樊登读书/error.txt'
 
     invalidLink1 = '#'
     # 非法URL 2
@@ -99,6 +101,7 @@ class Book(object):
         if not soup:
             self.duoDu_not_found.append(name)
             print("not found:", name)
+            self.write_file(self.error, name)
             return
 
         for k in soup.find_all('a'):
@@ -123,8 +126,23 @@ class Book(object):
             self.get_down(n, u)
         # print(self.duoDu_not_found)
         for f, l in self.download_dict.items():
+            print(">>>>", f)
+            if 'pc端' in f:
+                continue
+            self.write_file(self.file, f)
+
             self.download_button_onclick(l)
-            break
+
+    def write_file(self, file, name):
+        """
+        写文件
+        :param file:
+        :param name:
+        :return:
+        """
+        # file = '/Users/superlk/Desktop/樊登读书/list.txt'
+        with open(file, 'a+') as f:
+            f.writelines(name+'\n')
 
     def download_button_onclick(self, url):
         """
@@ -135,14 +153,32 @@ class Book(object):
         browser = webdriver.Chrome()
         browser.get(url)
         time.sleep(3)
+        need_time_selector = browser.find_element_by_xpath(
+            "//div[@class='display-4 fs-2 mb-3 mt-3 font-weight-normal text-warning']").text
+        need_time_list = need_time_selector.split()
+        need_time = 5
+        if need_time_list[2] == '分钟':
+            need_time = int(need_time_list[1]) * 60
+        elif need_time_list[2] == '秒':
+            need_time = int(need_time_list[1])
+        else:
+            need_time = 5
         browser.find_element_by_xpath("//button[@onclick='file_down( 0, 0)']").click()
-        time.sleep(5)
+        # print(need_time,need_time_list)
+        time.sleep(need_time)
         browser.quit()
 
 
 if __name__ == '__main__':
-    url = "http://blog.sina.com.cn/s/articlelist_6062317667_1_1.html"
-    book = Book(url)
-    # book.start()
-    book.download_button_onclick('https://545c.com/file/18852109-393346266')
+    url_init = "http://blog.sina.com.cn/s/articlelist_6062317667_1_"+'1'+'.html'
+    # for i in range(5):
+    #     url = url_init + str(i + 1) + '.html'
+    #     print(url)
+    #     book = Book(url)
+    #     book.start()
+    #     break
+
+    book = Book(url_init)
+    book.start()
+    # book.download_button_onclick('https://545c.com/file/18852109-393346266')
     # book.text()
