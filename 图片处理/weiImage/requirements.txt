@@ -30,7 +30,7 @@ pyparsing==2.4.5
 pypng==0.0.20
 PyQRCode==1.2.1
 pytz==2018.7
-PyYAML==5.1.2
+PyYAML==5.4
 qrcode==6.0
 requests==2.22.0
 six==1.11.0
